@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Planner Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            min-height: 100vh;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #1f2937;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 48px 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .auth-logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .auth-box h1 {
+            color: #111827;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .auth-box p {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 13px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .switch-auth {
+            text-align: center;
+            margin-top: 24px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .switch-auth a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .switch-auth a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main App */
+        .app-container {
+            display: none;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar h1 {
+            color: #111827;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: 24px;
+            padding-left: 24px;
+            border-left: 2px solid #e5e7eb;
+            color: #374151;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            padding: 7px 16px;
+            width: auto;
+            font-size: 13px;
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .logout-btn:hover {
+            background: #e5e7eb;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-title {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .stat-card h3 {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 24px;
+        }
+
+        .card h3 {
+            color: #111827;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Alerts */
+        .alert-item {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            font-size: 14px;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-item strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .alert-item.danger {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert-item.warning {
+            background: #fffbeb;
+            border: 1px solid #fed7aa;
+            color: #92400e;
+        }
+
+        .alert-item.info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        .mark-read-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            width: auto;
+            background: rgba(0, 0, 0, 0.05);
+            color: inherit;
+            font-weight: 500;
+        }
+
+        /* Transactions */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-date {
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .transaction-category {
+            font-weight: 600;
+            color: #111827;
+            margin-top: 4px;
+            font-size: 15px;
+        }
+
+        .transaction-amount {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .transaction-amount.income {
+            color: #10b981;
+        }
+
+        .transaction-amount.expense {
+            color: #ef4444;
+        }
+
+        .delete-btn {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 6px 14px;
+            font-size: 13px;
+            width: auto;
+            margin-left: 16px;
+        }
+
+        .delete-btn:hover {
+            background: #fee2e2;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Insights */
+        .insight-item {
+            padding: 16px 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin: 12px 0;
+            border-left: 4px solid #6366f1;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .insight-item strong {
+            color: #111827;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .badge.unread {
+            background: #ef4444;
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-info {
+                border-left: none;
+                border-top: 2px solid #e5e7eb;
+                padding-left: 0;
+                padding-top: 12px;
+                margin-left: 0;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Container -->
+    <div class="auth-container" id="auth-container">
+        <!-- Login Form -->
+        <div class="auth-box" id="login-box">
+            <div class="auth-logo">💰</div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to your Financial Planner Pro account</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required autocomplete="current-password">
+                </div>
+                <button type="submit">Sign In</button>
+            </form>
+            <div class="switch-auth">
+                Don't have an account? <a href="#" id="show-register">Create one</a>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div class="auth-box hidden" id="register-box">
+            <div class="auth-logo">💰</div>
+            <h1>Create Account</h1>
+            <p>Join Financial Planner Pro today</p>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email</label>
+                    <input type="email" id="reg-email" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" required autocomplete="new-password" minlength="6">
+                </div>
+                <button type="submit">Create Account</button>
+            </form>
+            <div class="switch-auth">
+                Already have an account? <a href="#" id="show-login">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="app-container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-brand">
+                <span style="font-size: 24px;">💰</span>
+                <h1>Financial Planner Pro</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-page="dashboard">Dashboard</a>
+                <a href="#" class="nav-link" data-page="transactions">Transactions</a>
+                <a href="#" class="nav-link" data-page="analytics">Analytics</a>
+                <div class="user-info">
+                    <span id="user-name"></span>
+                    <button class="logout-btn" id="logout-btn">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <h2 class="page-title">Dashboard</h2>
+                
+                <!-- Stats Cards -->
+                <div class="dashboard-grid" id="dashboard-stats">
+                    <div class="stat-card">
+                        <h3>Total Balance</h3>
+                        <div class="stat-value">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Month Income</h3>
+                        <div class="stat-value">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>This Month Expenses</h3>
+                        <div class="stat-value">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Transactions</h3>
+                        <div class="stat-value">0</div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div class="card">
+                    <h3>🔔 Recent Alerts <span class="badge unread hidden" id="unread-count">0</span></h3>
+                    <div id="alerts-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <p>No alerts yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Charts -->
+                <div class="charts-grid">
+                    <div class="card">
+                        <h3>Monthly Overview</h3>
+                        <div class="chart-container">
+                            <canvas id="dashboard-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Spending Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="spending-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Page -->
+            <div class="page" id="transactions-page">
+                <h2 class="page-title">Transactions</h2>
+                
+                <!-- Add Transaction Form -->
+                <div class="card">
+                    <h3>Add New Transaction</h3>
+                    <form id="transaction-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Type</label>
+                                <select id="trans-type" required>
+                                    <option value="expense">Expense</option>
+                                    <option value="income">Income</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <input type="text" id="trans-category" required placeholder="e.g., Groceries">
+                            </div>
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="number" id="trans-amount" step="0.01" required placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="trans-date" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description (Optional)</label>
+                            <input type="text" id="trans-description" placeholder="Add a note...">
+                        </div>
+                        <button type="submit">Add Transaction</button>
+                    </form>
+                </div>
+
+                <!-- Export Controls -->
+                <div class="card">
+                    <h3>📥 Export Transactions</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" id="export-start">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date</label>
+                            <input type="date" id="export-end">
+                        </div>
+                        <div class="form-group">
+                            <label>Format</label>
+                            <select id="export-format">
+                                <option value="csv">CSV</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" id="export-btn">Export Data</button>
+                </div>
+
+                <!-- Transactions List -->
+                <div class="card">
+                    <h3>Recent Transactions</h3>
+                    <div id="transactions-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📝</div>
+                            <p>No transactions yet. Add your first transaction above!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div class="page" id="analytics-page">
+                <h2 class="page-title">Analytics & Insights</h2>
+                
+                <!-- Behavioral Insights -->
+                <div class="card">
+                    <h3>🧠 Behavioral Insights</h3>
+                    <div id="insights-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📊</div>
+                            <p>Add more transactions to see personalized insights</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trend Charts -->
+                <div class="charts-grid">
+                    <div class="card">
+                        <h3>Income vs Expenses Trend</h3>
+                        <div class="chart-container">
+                            <canvas id="trends-chart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>Category Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let token = localStorage.getItem('token');
+        let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+        let charts = {};
+
+        // Initialize
+        if (token && currentUser) {
+            showApp();
+        }
+
+        // Auth Event Listeners
+        document.getElementById('show-register').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('login-box').classList.add('hidden');
+            document.getElementById('register-box').classList.remove('hidden');
+        });
+
+        document.getElementById('show-login').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('register-box').classList.add('hidden');
+            document.getElementById('login-box').classList.remove('hidden');
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                    showApp();
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
+        });
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/register`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, email, password})
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    currentUser = data.user;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                    showApp();
+                } else {
+                    alert(data.message || 'Registration failed');
+                }
+            } catch (error) {
+                alert('Registration failed: ' + error.message);
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            token = null;
+            currentUser = null;
+            document.getElementById('auth-container').style.display = 'flex';
+            document.getElementById('app-container').style.display = 'none';
+        });
+
+        function showApp() {
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+            document.getElementById('user-name').textContent = currentUser.username;
+            loadDashboard();
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageName = e.target.dataset.page;
+                
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageName + '-page').classList.add('active');
+                
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                e.target.classList.add('active');
+
+                if (pageName === 'dashboard') loadDashboard();
+                if (pageName === 'transactions') loadTransactions();
+                if (pageName === 'analytics') loadAnalytics();
+            });
+        });
+
+        // Dashboard
+        async function loadDashboard() {
+            await loadAlerts();
+        }
+
+        async function loadAlerts() {
+            try {
+                const response = await fetch(`${API_URL}/alerts`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const alerts = await response.json();
+                
+                const unread = alerts.filter(a => !a.is_read).length;
+                const unreadBadge = document.getElementById('unread-count');
+                if (unread > 0) {
+                    unreadBadge.textContent = unread;
+                    unreadBadge.classList.remove('hidden');
+                } else {
+                    unreadBadge.classList.add('hidden');
+                }
+                
+                const alertsList = document.getElementById('alerts-list');
+                if (alerts.length === 0) {
+                    alertsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No alerts yet</p></div>';
+                } else {
+                    alertsList.innerHTML = alerts.slice(0, 5).map(alert => `
+                        <div class="alert-item ${alert.severity}">
+                            <div class="alert-content">
+                                <strong>${alert.type.replace(/_/g, ' ')}</strong>
+                                <div>${alert.message}</div>
+                                <div class="transaction-date">${new Date(alert.created_at).toLocaleDateString()}</div>
+                            </div>
+                            ${!alert.is_read ? `<button class="mark-read-btn" onclick="markAlertRead(${alert.id})">Mark Read</button>` : ''}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load alerts:', error);
+            }
+        }
+
+        async function markAlertRead(alertId) {
+            try {
+                await fetch(`${API_URL}/alerts/${alertId}/read`, {
+                    method: 'PUT',
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                loadAlerts();
+            } catch (error) {
+                console.error('Failed to mark alert read:', error);
+            }
+        }
+
+        // Transactions
+        document.getElementById('transaction-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const transactionData = {
+                type: document.getElementById('trans-type').value,
+                category: document.getElementById('trans-category').value,
+                amount: parseFloat(document.getElementById('trans-amount').value),
+                description: document.getElementById('trans-description').value,
+                date: document.getElementById('trans-date').value
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/transactions`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+
+                if (response.ok) {
+                    alert('✅ Transaction added successfully!');
+                    document.getElementById('transaction-form').reset();
+                    document.getElementById('trans-date').valueAsDate = new Date();
+                    loadTransactions();
+                    loadDashboard();
+                } else {
+                    const data = await response.json();
+                    alert('Failed to add transaction: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        async function loadTransactions() {
+            try {
+                const response = await fetch(`${API_URL}/transactions`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const transactions = await response.json();
+                
+                const list = document.getElementById('transactions-list');
+                if (transactions.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><p>No transactions yet. Add your first transaction above!</p></div>';
+                } else {
+                    list.innerHTML = transactions.map(t => `
+                        <div class="transaction-item">
+                            <div>
+                                <div class="transaction-category">${t.category}</div>
+                                <div class="transaction-date">${new Date(t.date).toLocaleDateString()}</div>
+                                ${t.description ? `<div style="color: #9ca3af; font-size: 13px; margin-top: 4px;">${t.description}</div>` : ''}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="transaction-amount ${t.type}">
+                                    ${t.type === 'income' ? '+' : '-'}$${t.amount.toFixed(2)}
+                                </div>
+                                <button class="delete-btn" onclick="deleteTransaction(${t.id})">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load transactions:', error);
+            }
+        }
+
+        async function deleteTransaction(id) {
+            if (!confirm('Delete this transaction?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/transactions/${id}`, {
+                    method: 'DELETE',
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                
+                if (response.ok) {
+                    loadTransactions();
+                    loadDashboard();
+                }
+            } catch (error) {
+                alert('Failed to delete transaction');
+            }
+        }
+
+        document.getElementById('export-btn').addEventListener('click', async () => {
+            const startDate = document.getElementById('export-start').value;
+            const endDate = document.getElementById('export-end').value;
+            const format = document.getElementById('export-format').value;
+            
+            let url = `${API_URL}/export/transactions?format=${format}`;
+            if (startDate) url += `&start_date=${startDate}`;
+            if (endDate) url += `&end_date=${endDate}`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                
+                if (format === 'csv') {
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = 'transactions.csv';
+                    a.click();
+                } else {
+                    const data = await response.json();
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = 'transactions.json';
+                    a.click();
+                }
+                alert('✅ Export successful!');
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        });
+
+        // Analytics
+        async function loadAnalytics() {
+            await loadBehavioralInsights();
+            await loadTrendsChart();
+            await loadCategoryChart();
+        }
+
+        async function loadBehavioralInsights() {
+            try {
+                const response = await fetch(`${API_URL}/analytics/behavioral-insights`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const insights = await response.json();
+                
+                const list = document.getElementById('insights-list');
+                if (insights.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><p>Add more transactions to see personalized insights</p></div>';
+                } else {
+                    list.innerHTML = insights.map(insight => `
+                        <div class="insight-item">
+                            <strong>${getInsightIcon(insight.type)} ${insight.type.replace(/_/g, ' ').toUpperCase()}</strong>
+                            ${insight.message}
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load insights:', error);
+            }
+        }
+
+        function getInsightIcon(type) {
+            const icons = {
+                'top_spending': '💸',
+                'spending_pattern': '📅',
+                'daily_average': '📊',
+                'savings_improvement': '📈',
+                'savings_decline': '📉'
+            };
+            return icons[type] || '💡';
+        }
+
+        async function loadTrendsChart() {
+            try {
+                const response = await fetch(`${API_URL}/analytics/trends`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const trends = await response.json();
+                
+                if (trends.length === 0) return;
+                
+                const ctx = document.getElementById('trends-chart').getContext('2d');
+                if (charts['trends']) charts['trends'].destroy();
+                
+                charts['trends'] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: trends.map(t => t.month).reverse(),
+                        datasets: [{
+                            label: 'Income',
+                            data: trends.map(t => t.income).reverse(),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Expenses',
+                            data: trends.map(t => t.expenses).reverse(),
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load trends:', error);
+            }
+        }
+
+        async function loadCategoryChart() {
+            try {
+                const response = await fetch(`${API_URL}/analytics/spending-by-category`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const categories = await response.json();
+                
+                if (categories.length === 0) return;
+                
+                const ctx = document.getElementById('category-chart').getContext('2d');
+                if (charts['category']) charts['category'].destroy();
+                
+                charts['category'] = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: categories.map(c => c.category),
+                        datasets: [{
+                            data: categories.map(c => c.total),
+                            backgroundColor: [
+                                '#6366f1', '#8b5cf6', '#ec4899', '#f43f5e',
+                                '#f59e0b', '#10b981', '#3b82f6', '#06b6d4'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Failed to load category chart:', error);
+            }
+        }
+
+        // Set today's date as default
+        document.getElementById('trans-date').valueAsDate = new Date();
+    </script>
+</body>
+</html>
